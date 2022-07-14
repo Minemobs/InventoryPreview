@@ -2,6 +2,7 @@ package fr.minemobs.inventorypreview;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
@@ -13,13 +14,17 @@ public class Item {
     private Item(String name) {
         this.name = name;
         BufferedImage img;
-        try(InputStream is = getClass().getResourceAsStream("/grab/items/" + name + ".png")) {
-            img = ImageIO.read(Objects.requireNonNull(is));
-        } catch (Exception e) {
-            try(InputStream is = getClass().getResourceAsStream("/grab/blocks/" + name + ".png")) {
+        try(InputStream is = Objects.requireNonNull(Item.class.getResourceAsStream("/assets/renders/" + name + ".png"))) {
+            img = ImageIO.read(is);
+        } catch (IOException | NullPointerException e) {
+            try(InputStream is = getClass().getResourceAsStream("/assets/items/" + name + ".png")) {
                 img = ImageIO.read(Objects.requireNonNull(is));
-            } catch (Exception e2) {
-                throw new IllegalArgumentException("This item does not exist: " + name);
+            } catch (Exception e1) {
+                try(InputStream is = getClass().getResourceAsStream("/assets/blocks/" + name + ".png")) {
+                    img = ImageIO.read(Objects.requireNonNull(is));
+                } catch (Exception e2) {
+                    throw new IllegalArgumentException("This item does not exist: " + name);
+                }
             }
         }
         this.image = img;
