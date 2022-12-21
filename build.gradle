@@ -15,6 +15,9 @@ java {
 
 application {
     mainClassName = "fr.minemobs.inventorypreview.InventoryPreview"
+    run {
+        standardInput = System.in
+    }
 }
 
 repositories {
